@@ -2,6 +2,8 @@ import java.util.Scanner;
 
 public class CP2406_Assignment1 {
 
+    private static Game game;
+
     public static void main(String[] args) {
         showMenu();
         int menuchoice;
@@ -9,6 +11,7 @@ public class CP2406_Assignment1 {
         switch (menuchoice){
             case 1:{
                 newGame();
+                playGame();
             }
             case 2:{
                 System.out.println("Exiting Game.");
@@ -17,15 +20,24 @@ public class CP2406_Assignment1 {
         }
     }
 
+    private static void playGame() {
+        //Plays the game and outputs the winner
+        int winner;
+        winner = game.play();
+        System.out.println("Player " + winner + " wins!");
+    }
+
     private static void newGame() {
+        //Sets up a new game
         int numPlayers;
         numPlayers = getNumberOfPlayers();
-        Game game = new Game(numPlayers);
+        game = new Game(numPlayers);
         game.chooseDealer();
         game.dealCardsToPlayers();
     }
 
     private static int getNumberOfPlayers() {
+        //Gets the number of players from the user. Accepts 3,4 or 5
         System.out.println("Enter number of players(3-5).");
         int i = 0;
         boolean validInput = false;
@@ -45,6 +57,7 @@ public class CP2406_Assignment1 {
     }
 
     private static int getUserMenuInput() {
+        //Gets the user input for the menu. Accepts 1 or 2
         int i = 0;
         boolean validInput = false;
         while(!validInput) {
