@@ -17,7 +17,7 @@ public class Game {
     public void chooseDealer() {
         Random rand = new Random();
         dealerNum = rand.nextInt(numPlayers) +1;
-        System.out.println("The Dealer is Player " + dealerNum + ".");
+        System.out.println("The dealer is Player " + dealerNum + ".");
 
     }
 
