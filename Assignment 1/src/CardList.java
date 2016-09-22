@@ -58,12 +58,12 @@ public class CardList {
             {"Cassiterite","play","7","7.1","1 good, 1 poor","trace","high"},
             {"Gibbsite","play","3.5","2.4","1 perfect","low","high"},
             {"Goethite","play","5.5","4.3","1 perfect, 1 good","moderate","moderate"},
-            {"The Miner","trump",null,null,null,null,null},
-            {"The Petrologist","trump",null,null,null,null,null},
-            {"The Gemmologist","trump",null,null,null,null,null},
-            {"The Mineralogist","trump",null,null,null,null,null},
-            {"The Geophysicist","trump",null,null,null,null,null},
-            {"The Geologist","trump",null,null,null,null,null}};
+            {"The Miner","trump","N/A","N/A","N/A","N/A","N/A"},
+            {"The Petrologist","trump","N/A","N/A","N/A","N/A","N/A"},
+            {"The Gemmologist","trump","N/A","N/A","N/A","N/A","N/A"},
+            {"The Mineralogist","trump","N/A","N/A","N/A","N/A","N/A"},
+            {"The Geophysicist","trump","N/A","N/A","N/A","N/A","N/A"},
+            {"The Geologist","trump","N/A","N/A","N/A","N/A","N/A"}};
     }
 
     public String getName(int i){

@@ -1,84 +1,49 @@
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
 
 public class Player {
 
     private ArrayList<Card> cards;
+    private boolean turnPassed = false;
 
     public void setCards(ArrayList<Card> cards) {
         //Sets the cards drawn into the player array
         this.cards = cards;
     }
 
-    public Card selectCard(int playerTurn){
-        Card cardSelected;
-        if (playerTurn != 1){
-            int randNum;
-            //Computer's Turn, randomly selects card
-            Random rand = new Random();
-            randNum = rand.nextInt(numCardsLeft());
-            cardSelected = cards.remove(randNum);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        else{
-            //Player selects a card
-            System.out.println("Your Cards:");
-            System.out.println(cards);
-            cardSelected = cards.remove(getUserMenuInput()-1);
-        }
-        return cardSelected;
+
+    public void addCard(ArrayList<Card> card) {
+        //Sets the card drawn into the player array
+        this.cards.addAll(card);
     }
 
     public int numCardsLeft(){
+        //Returns the number of cards the player has left
         int cardsLeft = cards.size();
         return cardsLeft;
     }
 
-    public String selectCategory(int playerTurn) {
-        String category;
-        int categoryselected;
-
-        if (playerTurn != 1){
-            int randNum;
-            //Computer's Turn, randomly selects category
-            Random rand = new Random();
-            categoryselected = rand.nextInt(5);
+    public Card playCard(int cardNumber) {
+        Card cardPlayed;
+        //Removes the card chosen from the players hand.
+        cardPlayed = cards.remove(cardNumber-1);
+        //Pauses so human player can see computer players turns.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        else{
-            //Player selects a category
-            System.out.println("Select a category:" +
-            "\n1. Hardness" +
-            "\n2. Specific Gravity" +
-            "\n3. Cleavage" +
-            "\n4. Crystal Abundance" +
-            "\n5. Economic Value");
-        }
-        category = "a";
-        return category;
+        return cardPlayed;
     }
 
-    private int getUserMenuInput() {
-        //Gets the user to choose a card
-        System.out.println("Select a card to play, enter the cards number(1-" + numCardsLeft()+ "): ");
-        int i = 0;
-        boolean validInput = false;
-        while(!validInput) {
-            Scanner input = new Scanner(System.in);
-            if(input.hasNextInt()) {
-                i = input.nextInt();
-            }
-            if (i > 0 && i<=numCardsLeft()){
-                validInput=true;
-            }
-            else{
-                System.out.println("Invalid input. Choose between 1 and "  + numCardsLeft()+ ".");
-            }
-        }
-        return i;
+    public void showHand(){
+        System.out.println(cards);
+    }
+
+    public boolean isTurnPassed() {
+        return turnPassed;
+    }
+
+    public void setTurnPassed(boolean turnPassed) {
+        this.turnPassed = turnPassed;
     }
 }
