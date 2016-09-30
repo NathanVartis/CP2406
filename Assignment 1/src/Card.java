@@ -7,7 +7,7 @@ public class Card {
 
     public Card(int i) {
         //Creates the cards from the Card List
-        id = i;
+        id = i+1;
         name = cardlist.getName(i);
         type = cardlist.getType(i);
         hardness = cardlist.getHardness(i);
@@ -170,6 +170,10 @@ public class Card {
 
     public String getType() {
         return type;
+    }
+
+    public int getId() {
+        return id;
     }
 }
 

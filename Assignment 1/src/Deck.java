@@ -23,4 +23,8 @@ public class Deck {
         }
         return hand;
     }
+
+    public int numCardsLeftInDeck(){
+        return deckCards.size();
+    }
 }

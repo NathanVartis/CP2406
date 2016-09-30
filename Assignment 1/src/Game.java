@@ -1,5 +1,6 @@
-import java.util.ArrayList;
 import java.util.Random;
+import java.util.Collections;
+import java.util.ArrayList;
 
 public class Game {
 
@@ -12,6 +13,7 @@ public class Game {
     private String category = null;
     private boolean categoryChosen = false;
     private int numPlayersPassed =0;
+    private boolean magnetiteInstantWin = false;
 
     public Game(int numOfPlayers) {
         numPlayers = numOfPlayers;
@@ -54,8 +56,10 @@ public class Game {
         if (moveChosen == 0){
             //Player draws new card if they choose to pass.
             players[playerTurn-1].setTurnPassed(true);
-            ArrayList<Card> card = deck.dealCards(1);
-            players[playerTurn-1].addCard(card);
+            if(deck.numCardsLeftInDeck() > 0) {
+                ArrayList<Card> card = deck.dealCards(1);
+                players[playerTurn - 1].addCard(card);
+            }
             numPlayersPassed++;
         }
         else {
@@ -66,8 +70,7 @@ public class Game {
     public boolean checkGameWon() {
 
         //Checks if a player has won
-        System.out.println("Player " + playerTurn + " has " + players[playerTurn - 1].numCardsLeft() + " cards left.");
-        if (players[playerTurn - 1].numCardsLeft() == 0) {
+        if (players[playerTurn - 1].numCardsLeft() == 0 || magnetiteInstantWin) {
             return true;
         } else {
             return false;
@@ -75,11 +78,21 @@ public class Game {
     }
 
     public int computerSelectMove(){
-        //TODO try all cards before passing
+        //Tries all cards before passing
         int moveSelected;
-        Random rand = new Random();
-        moveSelected = rand.nextInt(getNumCardsLeft(playerTurn)+1);
-        return moveSelected;
+        ArrayList<Integer> cardPlayOrder = new ArrayList<Integer>();
+        for(int i = 1; i <= getNumCardsLeft(playerTurn);i++){
+            cardPlayOrder.add(i);
+        }
+        Collections.shuffle(cardPlayOrder);
+
+        for (Integer aCardPlayOrder : cardPlayOrder) {
+            if (isMoveValid(aCardPlayOrder)) {
+                moveSelected = aCardPlayOrder;
+                return moveSelected;
+            }
+        }
+        return 0;
     }
 
     public int computerSelectCategory() {
@@ -92,73 +105,112 @@ public class Game {
     public boolean isMoveValid(int moveSelected){
         //Checks if the card chosen is valid
         boolean validMove = false;
-        if(cardPlayedLastTurn == null){
+        //Pass turn
+        if(moveSelected == 0){
             validMove = true;
         }
-        else if(moveSelected == 0){
-            validMove = true;
-        }
-        else{
+        else if(cardPlayedLastTurn != null){
             Card cardChosen = players[playerTurn-1].checkCard(moveSelected);
-            switch (category){
-                case "Hardness":{
-                    if( Float.valueOf(cardChosen.getHardness()) > Float.valueOf(cardPlayedLastTurn.getHardness())){
-                        validMove = true;
+            if(cardChosen.getType().equals("trump")){
+                //Supertrump card
+                playTrumpCard(cardChosen);
+                validMove = true;
+            }
+            else {
+                //Normal card
+                switch (category) {
+                    case "Hardness": {
+                        if (Float.valueOf(cardChosen.getHardness()) > Float.valueOf(cardPlayedLastTurn.getHardness())) {
+                            validMove = true;
+                        } else {
+                            validMove = false;
+                        }
+                        break;
                     }
-                    else{
-                        validMove = false;
+                    case "Specific Gravity": {
+                        if (Float.valueOf(cardChosen.getSpecificGravity()) > Float.valueOf(cardPlayedLastTurn.getSpecificGravity())) {
+                            validMove = true;
+                        } else {
+                            validMove = false;
+                        }
+                        break;
                     }
-                    break;
-                }
-                case "Specific Gravity":{
-                    if( Float.valueOf(cardChosen.getSpecificGravity()) > Float.valueOf(cardPlayedLastTurn.getSpecificGravity())){
-                        validMove = true;
+                    case "Cleavage": {
+                        if (cardChosen.getCleavageNum() > cardPlayedLastTurn.getCleavageNum()) {
+                            validMove = true;
+                        } else {
+                            validMove = false;
+                        }
+                        break;
                     }
-                    else{
-                        validMove = false;
+                    case "Crystal Abundance": {
+                        if (cardChosen.getCrystalNum() > cardPlayedLastTurn.getCrystalNum()) {
+                            validMove = true;
+                        } else {
+                            validMove = false;
+                        }
+                        break;
                     }
-                    break;
-                }
-                case "Cleavage":{
-                    if( cardChosen.getCleavageNum() > cardPlayedLastTurn.getCleavageNum()){
-                        validMove = true;
+                    case "Economic Value": {
+                        if (cardChosen.getEconomicNum() > cardPlayedLastTurn.getEconomicNum()) {
+                            validMove = true;
+                        } else {
+                            validMove = false;
+                        }
+                        break;
                     }
-                    else{
-                        validMove = false;
-                    }
-                    break;
-                }
-                case "Crystal Abundance":{
-                    if( cardChosen.getCrystalNum() > cardPlayedLastTurn.getCrystalNum()){
-                        validMove = true;
-                    }
-                    else{
-                        validMove = false;
-                    }
-                    break;
-                }
-                case "Economic Value":{
-                    if( cardChosen.getEconomicNum() > cardPlayedLastTurn.getEconomicNum()){
-                        validMove = true;
-                    }
-                    else{
-                        validMove = false;
-                    }
-                    break;
                 }
             }
+        }
+        //Start of game, no card played yet
+        else{
+            validMove = true;
         }
         return validMove;
     }
 
-    public void showCardsinHand(int i) {
+    private void playTrumpCard(Card cardChosen) {
+        //Supertrump effects
+        switch(cardChosen.getId()){
+            case 55:{
+                category = "Economic Value";
+                break;
+            }
+            case 56:{
+                category = "Crystal Abundance";
+                break;
+            }
+            case 57:{
+                category = "Hardness";
+                break;
+            }
+            case 58:{
+                category = "Cleavage";
+                break;
+            }
+            case 59:{
+                //Checks if player has magnetite, if they do they win, otherwise sets category
+                for (int i = 1; i <= getNumCardsLeft(playerTurn); i++){
+                    if(players[playerTurn-1].checkCard(i).getId() == 46){
+                        magnetiteInstantWin = true;
+                    }
+                }
+                category = "Specific Gravity";
+                break;
+            }
+            case 60:{
+                CP2406_Assignment1.selectCategory(playerTurn);
+                break;
+            }
+        }
+    }
+
+    public void showCardsInHand(int i) {
         players[i-1].showHand();
     }
 
     public int getNumCardsLeft(int i){
-        int cardsLeft;
-        cardsLeft = players[i-1].numCardsLeft();
-        return cardsLeft;
+        return players[i-1].numCardsLeft();
     }
 
     public boolean haveAllPlayersPassed() {
@@ -169,6 +221,9 @@ public class Game {
             numPlayersPassed = 0;
             categoryChosen = false;
             for(int i =0; i < numPlayers; i++){
+                if(!players[i].isTurnPassed()){
+                    playerTurn = i+1;
+                }
                 players[i].setTurnPassed(false);
             }
             cardPlayedLastTurn = null;
@@ -220,5 +275,7 @@ public class Game {
         this.playerTurn = playerTurn;
     }
 
-
+    public boolean isMagnetiteInstantWin() {
+        return magnetiteInstantWin;
+    }
 }

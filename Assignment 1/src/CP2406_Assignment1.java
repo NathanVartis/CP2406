@@ -32,7 +32,7 @@ public class CP2406_Assignment1 {
                 System.out.println("Player " + i + "'s Turn.");
                 //Selects a category if none has been chosen
                 if(!game.isCategoryChosen()){
-                    game.setCategory(selectCategory(i));
+                    selectCategory(i);
                 }
                 System.out.println("Category is " + game.getCategory() + ".");
                 System.out.println("");
@@ -50,24 +50,25 @@ public class CP2406_Assignment1 {
                 else {
                     System.out.println("Player " + i + " has passed.");
                 }
+                System.out.println("Player " + game.getPlayerTurn() + " has " + game.getNumCardsLeft(game.getPlayerTurn()) + " cards left.");
+                //Checks if a player has no cards left or has played geophysicist/magnetite combo
+                gameWon = game.checkGameWon();
+                if(gameWon){
+                    break;
+                }
                 //Checks if all players have passed
                 if(game.haveAllPlayersPassed()){
                     System.out.println("All players have passed. Starting new round.");
-                    if(game.getPlayerTurn() < game.getNumPlayers()) {
-                        game.setPlayerTurn(game.getPlayerTurn() + 1);
-                    }
-                    else{
-                        game.setPlayerTurn(1);
-                    }
                 }
                 else{
                     game.setPlayerTurn(1);
                 }
-                //Checks if a player has no cards left
-                gameWon = game.checkGameWon();
             }
         }
         winner = game.getPlayerTurn();
+        if(game.isMagnetiteInstantWin()){
+            System.out.println("Geophysicist/Magnetite combo played.");
+        }
         System.out.println("Player " + winner + " wins!");
     }
 
@@ -82,7 +83,7 @@ public class CP2406_Assignment1 {
             else{
                 //Player selects a card
                 System.out.println("Your Cards:");
-                game.showCardsinHand(playerTurn);
+                game.showCardsInHand(playerTurn);
                 moveSelected = (getUserTurnInput(playerTurn));
             }
             validMove = game.isMoveValid(moveSelected);
@@ -104,7 +105,7 @@ public class CP2406_Assignment1 {
         return moveSelected;
     }
 
-    private static String selectCategory(int playerTurn) {
+    public static void selectCategory(int playerTurn) {
         String category = null;
         int categorySelected = 0;
         if (playerTurn != 1){
@@ -156,8 +157,7 @@ public class CP2406_Assignment1 {
             }
         }
         game.setCategoryChosen(true);
-        return category;
-
+        game.setCategory(category);
     }
 
     private static void newGame() {
@@ -221,7 +221,7 @@ public class CP2406_Assignment1 {
         //Gets the user to choose a card
         System.out.println("Select a card to play, enter the cards number(1-" + game.getNumCardsLeft(playerTurn)+ ").\n" +
                 "To pass your turn enter 0: ");
-        int i = 0;
+        int i = -1;
         boolean validInput = false;
         while(!validInput) {
             Scanner input = new Scanner(System.in);
