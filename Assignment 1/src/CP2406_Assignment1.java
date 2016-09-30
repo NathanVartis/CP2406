@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.util.Scanner;
 
 public class CP2406_Assignment1 {
@@ -25,7 +24,6 @@ public class CP2406_Assignment1 {
         //Plays the game and outputs the winner
         int winner;
         boolean gameWon = false;
-        boolean validTurn = false;
 
         //Main Game Loop
         while (!gameWon){
@@ -36,10 +34,18 @@ public class CP2406_Assignment1 {
                 if(!game.isCategoryChosen()){
                     game.setCategory(selectCategory(i));
                 }
-                //Player takes turn if theu haven't passed
+                System.out.println("Category is " + game.getCategory() + ".");
+                System.out.println("");
+                //Player takes turn if they haven't passed
                 if(!game.hasPlayerPassed()){
                     game.takeTurn(selectMove(i));
-                    System.out.println("Card Played: \n" + game.getCardPlayedThisTurn());
+                    System.out.println("Card Played: \n" + game.getCardPlayedLastTurn());
+                    //Pauses so human player can see computer players turns.
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 else {
                     System.out.println("Player " + i + " has passed.");
@@ -47,44 +53,63 @@ public class CP2406_Assignment1 {
                 //Checks if all players have passed
                 if(game.haveAllPlayersPassed()){
                     System.out.println("All players have passed. Starting new round.");
+                    if(game.getPlayerTurn() < game.getNumPlayers()) {
+                        game.setPlayerTurn(game.getPlayerTurn() + 1);
+                    }
+                    else{
+                        game.setPlayerTurn(1);
+                    }
+                }
+                else{
+                    game.setPlayerTurn(1);
                 }
                 //Checks if a player has no cards left
                 gameWon = game.checkGameWon();
-            }
-            //Sets the player turn to 1 for the for loop above
-            if(!gameWon) {
-                game.setPlayerTurn(1);
             }
         }
         winner = game.getPlayerTurn();
         System.out.println("Player " + winner + " wins!");
     }
 
-    public static int selectMove(int playerTurn){
-        int moveSelected;
-        if (playerTurn != 1){
-            //Computer's Turn, randomly selects card or passes
-            Random rand = new Random();
-            moveSelected = rand.nextInt(game.getNumCardsLeft(playerTurn)+1);
+    private static int selectMove(int playerTurn){
+        int moveSelected = 0;
+        boolean validMove = false;
+        while(!validMove){
+            if (playerTurn != 1){
+                //Computer's Turn, randomly selects card or passes if there are no valid moves
+                moveSelected = game.computerSelectMove();
+            }
+            else{
+                //Player selects a card
+                System.out.println("Your Cards:");
+                game.showCardsinHand(playerTurn);
+                moveSelected = (getUserTurnInput(playerTurn));
+            }
+            validMove = game.isMoveValid(moveSelected);
+            if(!validMove && playerTurn == 1){
+                System.out.println("Invalid move. Select a card with a higher value in the current category" +
+                        " or select a supertrump card.");
+                //Pauses so player can see error message.
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Card Played: \n" + game.getCardPlayedLastTurn());
+            }
         }
-        else{
-            //Player selects a card
-            System.out.println("Your Cards:");
-            game.showCardsinHand(playerTurn);
-            moveSelected = (getUserTurnInput(playerTurn));
+        if (moveSelected == 0){
+            System.out.println("Player " + game.getPlayerTurn() + " has passed.");
         }
         return moveSelected;
     }
 
     private static String selectCategory(int playerTurn) {
         String category = null;
-        int categoryselected = 0;
-
+        int categorySelected = 0;
         if (playerTurn != 1){
-            int randNum;
             //Computer's Turn, randomly selects category
-            Random rand = new Random();
-            categoryselected = rand.nextInt(5)+1;
+            categorySelected = game.computerSelectCategory();
         }
         else{
             //Player selects a category
@@ -98,9 +123,9 @@ public class CP2406_Assignment1 {
             while(!validInput) {
                 Scanner input = new Scanner(System.in);
                 if (input.hasNextInt()) {
-                    categoryselected = input.nextInt();
+                    categorySelected = input.nextInt();
                 }
-                if (categoryselected <= 5 && categoryselected >= 1) {
+                if (categorySelected <= 5 && categorySelected >= 1) {
                     validInput = true;
                 } else {
                     System.out.println("Invalid input. Enter number from 1-5");
@@ -108,7 +133,7 @@ public class CP2406_Assignment1 {
             }
         }
 
-        switch (categoryselected){
+        switch (categorySelected){
             case 1:{
                 category = "Hardness";
                 break;
@@ -131,7 +156,6 @@ public class CP2406_Assignment1 {
             }
         }
         game.setCategoryChosen(true);
-        System.out.println("Category is " + category + ".");
         return category;
 
     }

@@ -44,7 +44,7 @@ public class CardList {
             {"Gypsum","play","2","2.3","1 perfect, 2 good","trace","high"},
             {"Barite","play","3.5","4.5","2 perfect, 1 good","trace","moderate"},
             {"Apatite","play","5","3.2","2 poor","low","high"},
-            {"Monazite","play","5","5.2","1 good,1 poor","trace","moderate"},
+            {"Monazite","play","5","5.2","1 good, 1 poor","trace","moderate"},
             {"Calcite","play","3","2.7","3 perfect","moderate","high"},
             {"Dolomite","play","4","2.9","3 perfect","low","low"},
             {"Magnesite","play","4","3","3 perfect","low","moderate"},
@@ -58,12 +58,12 @@ public class CardList {
             {"Cassiterite","play","7","7.1","1 good, 1 poor","trace","high"},
             {"Gibbsite","play","3.5","2.4","1 perfect","low","high"},
             {"Goethite","play","5.5","4.3","1 perfect, 1 good","moderate","moderate"},
-            {"The Miner","trump","N/A","N/A","N/A","N/A","N/A"},
-            {"The Petrologist","trump","N/A","N/A","N/A","N/A","N/A"},
-            {"The Gemmologist","trump","N/A","N/A","N/A","N/A","N/A"},
-            {"The Mineralogist","trump","N/A","N/A","N/A","N/A","N/A"},
-            {"The Geophysicist","trump","N/A","N/A","N/A","N/A","N/A"},
-            {"The Geologist","trump","N/A","N/A","N/A","N/A","N/A"}};
+            {"The Miner","trump","0","0","0","0","0"},
+            {"The Petrologist","trump","0","0","0","0","0"},
+            {"The Gemmologist","trump","0","0","0","0","0"},
+            {"The Mineralogist","trump","0","0","0","0","0"},
+            {"The Geophysicist","trump","0","0","0","0","0"},
+            {"The Geologist","trump","0","0","0","0","0"}};
     }
 
     public String getName(int i){

@@ -7,11 +7,9 @@ public class Game {
     private int dealerNum;
     private Player[] players;
     private Deck deck = new Deck();
-    private static int cardsToDeal = 8;
     private int playerTurn;
-    private Card cardPlayedThisTurn = null;
     private Card cardPlayedLastTurn = null;
-    private String category = "None";
+    private String category = null;
     private boolean categoryChosen = false;
     private int numPlayersPassed =0;
 
@@ -39,6 +37,7 @@ public class Game {
 
     public void dealCardsToPlayers() {
         //Creates the player array
+        int cardsToDeal = 8;
         players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
             players[i] = new Player();
@@ -52,7 +51,6 @@ public class Game {
 
     public void takeTurn(int moveChosen) {
         //Players take their turns
-        cardPlayedLastTurn = cardPlayedThisTurn;
         if (moveChosen == 0){
             //Player draws new card if they choose to pass.
             players[playerTurn-1].setTurnPassed(true);
@@ -61,19 +59,96 @@ public class Game {
             numPlayersPassed++;
         }
         else {
-            cardPlayedThisTurn = players[playerTurn - 1].playCard(moveChosen);
+            cardPlayedLastTurn = players[playerTurn-1].playCard(moveChosen);
         }
     }
 
     public boolean checkGameWon() {
 
         //Checks if a player has won
-        System.out.println("test " + players[playerTurn - 1].numCardsLeft());
+        System.out.println("Player " + playerTurn + " has " + players[playerTurn - 1].numCardsLeft() + " cards left.");
         if (players[playerTurn - 1].numCardsLeft() == 0) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public int computerSelectMove(){
+        //TODO try all cards before passing
+        int moveSelected;
+        Random rand = new Random();
+        moveSelected = rand.nextInt(getNumCardsLeft(playerTurn)+1);
+        return moveSelected;
+    }
+
+    public int computerSelectCategory() {
+        int categorySelected;
+        Random rand = new Random();
+        categorySelected = rand.nextInt(5)+1;
+        return categorySelected;
+    }
+
+    public boolean isMoveValid(int moveSelected){
+        //Checks if the card chosen is valid
+        boolean validMove = false;
+        if(cardPlayedLastTurn == null){
+            validMove = true;
+        }
+        else if(moveSelected == 0){
+            validMove = true;
+        }
+        else{
+            Card cardChosen = players[playerTurn-1].checkCard(moveSelected);
+            switch (category){
+                case "Hardness":{
+                    if( Float.valueOf(cardChosen.getHardness()) > Float.valueOf(cardPlayedLastTurn.getHardness())){
+                        validMove = true;
+                    }
+                    else{
+                        validMove = false;
+                    }
+                    break;
+                }
+                case "Specific Gravity":{
+                    if( Float.valueOf(cardChosen.getSpecificGravity()) > Float.valueOf(cardPlayedLastTurn.getSpecificGravity())){
+                        validMove = true;
+                    }
+                    else{
+                        validMove = false;
+                    }
+                    break;
+                }
+                case "Cleavage":{
+                    if( cardChosen.getCleavageNum() > cardPlayedLastTurn.getCleavageNum()){
+                        validMove = true;
+                    }
+                    else{
+                        validMove = false;
+                    }
+                    break;
+                }
+                case "Crystal Abundance":{
+                    if( cardChosen.getCrystalNum() > cardPlayedLastTurn.getCrystalNum()){
+                        validMove = true;
+                    }
+                    else{
+                        validMove = false;
+                    }
+                    break;
+                }
+                case "Economic Value":{
+                    if( cardChosen.getEconomicNum() > cardPlayedLastTurn.getEconomicNum()){
+                        validMove = true;
+                    }
+                    else{
+                        validMove = false;
+                    }
+                    break;
+                }
+            }
+        }
+        return validMove;
     }
 
     public void showCardsinHand(int i) {
@@ -89,13 +164,14 @@ public class Game {
     public boolean haveAllPlayersPassed() {
         //Resets the passed variables and category to start a new round
         boolean allPlayersPassed;
-        if(numPlayersPassed == numPlayers){
+        if(numPlayersPassed == numPlayers-1){
             allPlayersPassed = true;
             numPlayersPassed = 0;
             categoryChosen = false;
             for(int i =0; i < numPlayers; i++){
                 players[i].setTurnPassed(false);
             }
+            cardPlayedLastTurn = null;
         }
         else {
             allPlayersPassed = false;
@@ -104,8 +180,7 @@ public class Game {
     }
 
     public boolean hasPlayerPassed(){
-        boolean passed = players[playerTurn-1].isTurnPassed();
-        return passed;
+        return players[playerTurn-1].isTurnPassed();
     }
 
     public int getNumPlayers() {
@@ -120,8 +195,12 @@ public class Game {
         return playerTurn;
     }
 
-    public Card getCardPlayedThisTurn() {
-        return cardPlayedThisTurn;
+    public Card getCardPlayedLastTurn() {
+        return cardPlayedLastTurn;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public boolean isCategoryChosen() {
@@ -140,5 +219,6 @@ public class Game {
     public void setPlayerTurn(int playerTurn) {
         this.playerTurn = playerTurn;
     }
+
 
 }

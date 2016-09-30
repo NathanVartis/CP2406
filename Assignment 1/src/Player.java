@@ -26,12 +26,6 @@ public class Player {
         Card cardPlayed;
         //Removes the card chosen from the players hand.
         cardPlayed = cards.remove(cardNumber-1);
-        //Pauses so human player can see computer players turns.
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         return cardPlayed;
     }
 
@@ -45,5 +39,9 @@ public class Player {
 
     public void setTurnPassed(boolean turnPassed) {
         this.turnPassed = turnPassed;
+    }
+
+    public Card checkCard(int cardNumber){
+        return cards.get(cardNumber-1);
     }
 }
