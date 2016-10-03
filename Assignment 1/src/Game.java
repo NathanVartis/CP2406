@@ -109,14 +109,14 @@ public class Game {
         if(moveSelected == 0){
             validMove = true;
         }
-        else if(cardPlayedLastTurn != null){
+        else{
             Card cardChosen = players[playerTurn-1].checkCard(moveSelected);
             if(cardChosen.getType().equals("trump")){
                 //Supertrump card
                 playTrumpCard(cardChosen);
                 validMove = true;
             }
-            else {
+            else if(cardPlayedLastTurn != null) {
                 //Normal card
                 switch (category) {
                     case "Hardness": {
@@ -161,10 +161,10 @@ public class Game {
                     }
                 }
             }
-        }
-        //Start of game, no card played yet
-        else{
-            validMove = true;
+            //Start of game, no card played yet
+            else{
+                validMove = true;
+            }
         }
         return validMove;
     }
