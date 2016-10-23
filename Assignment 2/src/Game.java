@@ -24,23 +24,24 @@ public class Game {
         //Player's Turn
         //Since function is always run at new game in case computer needs to go first,  -1 check is there to ignore
         //the players default turn if they have to go first
-        if(playerTurn == 1 && cardNum != -1) {
+
+        if(playerTurn == 1 && !hasPlayerPassed() && cardNum != -1) {
             takeTurn(cardNum);
-            System.out.println("test player turn");
+            checkPass();
             playerTurn++;
         }
         //Computer turns, if statement is for initial run of function in case player is chosen to go first.
         if(playerTurn !=1) {
             for (int i = playerTurn; i <= numPlayers; i++) {
                 playerTurn = i;
-                CP2406_Assignment2.mainFrame.refreshUI();
-                System.out.println("test CPU turn");
-                System.out.println(playerTurn);
-                takeTurn(computerSelectMove());
-                System.out.println(cardPlayedLastTurn);
-                //Pauses for 1 second so player can see computer turns
+                CP2406_Assignment2.mainFrame.updateUI();
+                if(!hasPlayerPassed()) {
+                    takeTurn(computerSelectMove());
+                }
+                checkPass();
+                //Pauses for 0.5 seconds so player can see computer turns
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -48,8 +49,25 @@ public class Game {
             }
         }
         playerTurn = 1;
-        CP2406_Assignment2.mainFrame.refreshUI();
+        CP2406_Assignment2.mainFrame.updateUI();
         gameWon = checkGameWon();
+        if(gameWon){
+            CP2406_Assignment2.mainFrame.gameWon(playerTurn);
+        }
+    }
+
+    private void checkPass() {
+        if(haveAllPlayersPassed()){
+            //New round if all players passed
+            if(playerTurn < numPlayers){
+                playerTurn++;
+            }
+            else{
+                playerTurn = 1;
+            }
+            CP2406_Assignment2.mainFrame.selectCategory(playerTurn);
+
+        }
     }
 
     public int chooseDealer() {
@@ -94,7 +112,6 @@ public class Game {
         else {
             cardPlayedLastTurn = players[playerTurn-1].playCard(moveChosen);
         }
-        System.out.println("test turn taken");
     }
 
     public boolean checkGameWon() {
@@ -229,7 +246,7 @@ public class Game {
                 break;
             }
             case 60:{
-               // CP2406_Assignment2.selectCategory(playerTurn);
+                CP2406_Assignment2.mainFrame.selectCategory(playerTurn);
                 break;
             }
         }
@@ -247,6 +264,7 @@ public class Game {
         //Resets the passed variables and category to start a new round
         boolean allPlayersPassed;
         if(numPlayersPassed == numPlayers-1){
+            System.out.println("true");
             allPlayersPassed = true;
             numPlayersPassed = 0;
             categoryChosen = false;

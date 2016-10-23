@@ -27,7 +27,6 @@ public class CardView extends JPanel{
                 if(CP2406_Assignment2.game.isMoveValid(cardNum) && CP2406_Assignment2.game.getPlayerTurn() == 1 && cardNum != 0){
                     remove(cardImage);
                     CP2406_Assignment2.game.play(cardNum);
-
                 }
                 else if(CP2406_Assignment2.game.getPlayerTurn() != 1  && cardNum != 0) {
                     //Error window for trying to play a card outside of players turn.
@@ -46,14 +45,12 @@ public class CardView extends JPanel{
                 }
                 revalidate();
                 repaint();
-
             }
         });
 
     }
 
     private ImageIcon getImage() {
-        System.out.println(card.getId());
         String path = ".\\images\\Slide"+ card.getId() + ".jpg";
         ImageIcon imageIcon = new ImageIcon(getClass().getResource(path));
         //Rescales images so they all fit on the screen
