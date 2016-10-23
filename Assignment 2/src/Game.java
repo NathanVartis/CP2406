@@ -23,21 +23,17 @@ public class Game {
         //Chooses Dealer
         Random rand = new Random();
         dealerNum = rand.nextInt(numPlayers) + 1;
-
-        return dealerNum;
-
-    }
-
-    public void chooseFirstPlayer(){
         //Player after dealer goes first
         if (dealerNum < numPlayers) {
             playerTurn = dealerNum + 1;
         } else {
             playerTurn = 1;
         }
+        return dealerNum;
+
     }
 
-    public void dealCardsToPlayers() {
+     public void dealCardsToPlayers() {
         //Creates the player array
         int cardsToDeal = 8;
         players = new Player[numPlayers];
@@ -199,7 +195,7 @@ public class Game {
                 break;
             }
             case 60:{
-                CP2406_Assignment2.selectCategory(playerTurn);
+               // CP2406_Assignment2.selectCategory(playerTurn);
                 break;
             }
         }
@@ -232,6 +228,10 @@ public class Game {
             allPlayersPassed = false;
         }
         return allPlayersPassed;
+    }
+
+    public Player getHumanPlayer(){
+        return players[0];
     }
 
     public boolean hasPlayerPassed(){
