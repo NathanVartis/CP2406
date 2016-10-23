@@ -44,4 +44,9 @@ public class Player {
     public Card checkCard(int cardNumber){
         return cards.get(cardNumber-1);
     }
+
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
+
 }

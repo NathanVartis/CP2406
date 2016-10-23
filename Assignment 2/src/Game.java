@@ -14,9 +14,42 @@ public class Game {
     private boolean categoryChosen = false;
     private int numPlayersPassed =0;
     private boolean magnetiteInstantWin = false;
+    private boolean gameWon = false;
 
     public Game(int numOfPlayers) {
         numPlayers = numOfPlayers;
+    }
+
+    public void play(int cardNum){
+        //Player's Turn
+        //Since function is always run at new game in case computer needs to go first,  -1 check is there to ignore
+        //the players default turn if they have to go first
+        if(playerTurn == 1 && cardNum != -1) {
+            takeTurn(cardNum);
+            System.out.println("test player turn");
+            playerTurn++;
+        }
+        //Computer turns, if statement is for initial run of function in case player is chosen to go first.
+        if(playerTurn !=1) {
+            for (int i = playerTurn; i <= numPlayers; i++) {
+                playerTurn = i;
+                CP2406_Assignment2.mainFrame.refreshUI();
+                System.out.println("test CPU turn");
+                System.out.println(playerTurn);
+                takeTurn(computerSelectMove());
+                System.out.println(cardPlayedLastTurn);
+                //Pauses for 1 second so player can see computer turns
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        playerTurn = 1;
+        CP2406_Assignment2.mainFrame.refreshUI();
+        gameWon = checkGameWon();
     }
 
     public int chooseDealer() {
@@ -61,6 +94,7 @@ public class Game {
         else {
             cardPlayedLastTurn = players[playerTurn-1].playCard(moveChosen);
         }
+        System.out.println("test turn taken");
     }
 
     public boolean checkGameWon() {
@@ -231,7 +265,7 @@ public class Game {
     }
 
     public Player getHumanPlayer(){
-        return players[0];
+           return players[0];
     }
 
     public boolean hasPlayerPassed(){
@@ -262,8 +296,29 @@ public class Game {
         return categoryChosen;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategory(int categorySelected) {
+        switch (categorySelected) {
+            case 1: {
+                category = "Hardness";
+                break;
+            }
+            case 2: {
+                category = "Specific Gravity";
+                break;
+            }
+            case 3: {
+                category = "Cleavage";
+                break;
+            }
+            case 4: {
+                category = "Crystal Abundance";
+                break;
+            }
+            case 5: {
+                category = "Economic Value";
+                break;
+            }
+        }
     }
 
     public void setCategoryChosen(boolean categoryChosen) {
